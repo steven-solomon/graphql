@@ -2,6 +2,8 @@ package com.example.graphql.graphql;
 
 import graphql.ExecutionResult;
 import graphql.GraphQL;
+import graphql.schema.DataFetcher;
+import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLSchema;
 import graphql.schema.StaticDataFetcher;
 import graphql.schema.idl.RuntimeWiring;
@@ -11,6 +13,7 @@ import graphql.schema.idl.TypeDefinitionRegistry;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ResourceLoader;
 
 import java.io.*;
 import java.util.Arrays;
@@ -20,39 +23,38 @@ import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 @SpringBootApplication
 public class GraphqlApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(GraphqlApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(GraphqlApplication.class, args);
+  }
 
-	@Bean
-	public GraphQL graphQL() {
-		SchemaParser schemaParser = new SchemaParser();
-		TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(getSchema());
+  @Bean
+  public GraphQL graphQL(ResourceLoader resourceLoader) {
+    SchemaParser schemaParser = new SchemaParser();
+    TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(getSchema(resourceLoader));
 
-		RuntimeWiring runtimeWiring = newRuntimeWiring()
-				.type("Query", builder -> builder.dataFetcher("hello", new StaticDataFetcher("world")))
-				.build();
+    RuntimeWiring runtimeWiring = newRuntimeWiring()
+      .type("Query", builder -> builder.dataFetcher("hello", new WorldFetcher()))
+      .build();
 
-		SchemaGenerator schemaGenerator = new SchemaGenerator();
-		GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
+    SchemaGenerator schemaGenerator = new SchemaGenerator();
+    GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
 
-		return GraphQL.newGraphQL(graphQLSchema).build();
-	}
+    return GraphQL.newGraphQL(graphQLSchema).build();
+  }
 
-  private static String getSchema() {
-		InputStream inputStream = ClassLoader.getSystemResourceAsStream("schema.graphqls");
-		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-		StringBuilder builder = new StringBuilder();
+  private static String getSchema(ResourceLoader resourceLoader) {
+    try {
+      StringBuilder builder = new StringBuilder();
+      InputStream inputStream = resourceLoader.getResource("classpath:schema.graphqls").getInputStream();
+      InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+      BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-		try {
-			while (bufferedReader.ready()) {
-				builder.append(bufferedReader.readLine());
-			}
-		} catch (IOException e) {
-			System.err.println(Arrays.toString(e.getStackTrace()));
-		}
-
-		return builder.toString();
+      while (bufferedReader.ready()) {
+        builder.append(bufferedReader.readLine());
+      }
+      return builder.toString();
+    } catch (IOException e) {
+      throw new RuntimeException("Failed to load Schema", e);
+    }
   }
 }
