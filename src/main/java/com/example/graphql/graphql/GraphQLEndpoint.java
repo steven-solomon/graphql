@@ -4,6 +4,7 @@ import graphql.ExecutionResult;
 import graphql.GraphQL;
 import graphql.GraphQLError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,13 +18,12 @@ public class GraphQLEndpoint {
     GraphQL graphQL;
 
     @PostMapping("/")
-    public ResponseEntity<String> home(@RequestBody String query) {
-        System.out.println("query: " + query);
+    public ResponseEntity<GraphQLResponse> home(@RequestBody String query) {
         ExecutionResult execute = graphQL.execute(query);
         List<GraphQLError> errors = execute.getErrors();
         if (!errors.isEmpty())
-            return ResponseEntity.badRequest().body(errors.toString());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-        return ResponseEntity.ok(execute.getData());
+        return ResponseEntity.ok(new GraphQLResponse(execute.getData()));
     }
 }

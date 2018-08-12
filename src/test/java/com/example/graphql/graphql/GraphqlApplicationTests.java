@@ -36,6 +36,6 @@ public class GraphqlApplicationTests {
 		mockMvc
 			.perform(post("/").content("{hello}").contentType(MediaType.TEXT_PLAIN))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.hello").value("world"));
+			.andExpect(jsonPath("$.data.hello").value("world"));
 	}
 }
