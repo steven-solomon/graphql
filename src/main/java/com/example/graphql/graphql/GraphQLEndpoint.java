@@ -16,7 +16,7 @@ public class GraphQLEndpoint {
     @Autowired
     GraphQL graphQL;
 
-    @PostMapping("/home")
+    @PostMapping("/")
     public ResponseEntity<String> home(@RequestBody String query) {
         System.out.println("query: " + query);
         ExecutionResult execute = graphQL.execute(query);

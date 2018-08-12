@@ -1,12 +1,3 @@
-schema {
-  query: Query
-}
-
-type Query {
-  allLinks: [Link]
-}
-
-type Link {
-  url: String!
-  description: String!
+type Query{
+    hello: String
 }

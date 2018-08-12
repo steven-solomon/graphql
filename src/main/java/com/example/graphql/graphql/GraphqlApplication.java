@@ -12,6 +12,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.io.*;
+import java.util.Arrays;
+
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
 @SpringBootApplication
@@ -23,10 +26,8 @@ public class GraphqlApplication {
 
 	@Bean
 	public GraphQL graphQL() {
-		String schema = "type Query{hello: String}";
-
 		SchemaParser schemaParser = new SchemaParser();
-		TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(schema);
+		TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(getSchema());
 
 		RuntimeWiring runtimeWiring = newRuntimeWiring()
 				.type("Query", builder -> builder.dataFetcher("hello", new StaticDataFetcher("world")))
@@ -37,4 +38,21 @@ public class GraphqlApplication {
 
 		return GraphQL.newGraphQL(graphQLSchema).build();
 	}
+
+  private static String getSchema() {
+		InputStream inputStream = ClassLoader.getSystemResourceAsStream("schema.graphqls");
+		InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+		BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+		StringBuilder builder = new StringBuilder();
+
+		try {
+			while (bufferedReader.ready()) {
+				builder.append(bufferedReader.readLine());
+			}
+		} catch (IOException e) {
+			System.err.println(Arrays.toString(e.getStackTrace()));
+		}
+
+		return builder.toString();
+  }
 }
