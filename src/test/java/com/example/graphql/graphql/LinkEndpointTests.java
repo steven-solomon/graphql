@@ -33,7 +33,7 @@ public class LinkEndpointTests {
 	@Test
 	public void allLinks() throws Exception {
 		mockMvc
-			.perform(post("/").content("{allLinks {name, description}}").contentType(MediaType.TEXT_PLAIN))
+			.perform(post("/").content("{ \"query\": \"{allLinks {name, description}}\" }").contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.data.allLinks[0].name").value("google.com"))
 			.andExpect(jsonPath("$.data.allLinks[0].description").value("A site to search"))

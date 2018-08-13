@@ -18,8 +18,8 @@ public class LinkEndpoint  {
     GraphQL graphQL;
 
     @PostMapping("/")
-    public ResponseEntity<GraphQLResponse> home(@RequestBody String query) {
-        ExecutionResult execute = graphQL.execute(query);
+    public ResponseEntity<GraphQLResponse> home(@RequestBody() GraphQLQuery body) {
+        ExecutionResult execute = graphQL.execute(body.getQuery());
         List<GraphQLError> errors = execute.getErrors();
         if (!errors.isEmpty())
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
