@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class GraphqlApplicationTests {
+public class LinkEndpointTests {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -30,12 +30,14 @@ public class GraphqlApplicationTests {
 		this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 	}
 
-
 	@Test
-	public void helloWorld() throws Exception {
+	public void allLinks() throws Exception {
 		mockMvc
-			.perform(post("/").content("{hello}").contentType(MediaType.TEXT_PLAIN))
+			.perform(post("/").content("{allLinks {name, description}}").contentType(MediaType.TEXT_PLAIN))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.hello").value("world"));
+			.andExpect(jsonPath("$.data.allLinks[0].name").value("google.com"))
+			.andExpect(jsonPath("$.data.allLinks[0].description").value("A site to search"))
+			.andExpect(jsonPath("$.data.allLinks[1].name").value("linkedin.com"))
+			.andExpect(jsonPath("$.data.allLinks[1].description").value("A site to remember birthdays"));
 	}
 }

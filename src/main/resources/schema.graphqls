@@ -1,1 +1,10 @@
-type Query{ hello: String }
+type Query{ allLinks: [Link] }
+
+type Link {
+    name: String
+    description: String
+}
+
+schema {
+    query: Query
+}

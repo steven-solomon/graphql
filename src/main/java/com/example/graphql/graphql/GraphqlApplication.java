@@ -1,11 +1,7 @@
 package com.example.graphql.graphql;
 
-import graphql.ExecutionResult;
 import graphql.GraphQL;
-import graphql.schema.DataFetcher;
-import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.GraphQLSchema;
-import graphql.schema.StaticDataFetcher;
 import graphql.schema.idl.RuntimeWiring;
 import graphql.schema.idl.SchemaGenerator;
 import graphql.schema.idl.SchemaParser;
@@ -15,8 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.ResourceLoader;
 
-import java.io.*;
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import static graphql.schema.idl.RuntimeWiring.newRuntimeWiring;
 
@@ -33,11 +31,10 @@ public class GraphqlApplication {
     TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(getSchema(resourceLoader));
 
     RuntimeWiring runtimeWiring = newRuntimeWiring()
-      .type("Query", builder -> builder.dataFetcher("hello", new WorldFetcher()))
+      .type("Query", builder -> builder.dataFetcher("allLinks", new QueryFetcher()))
       .build();
 
-    SchemaGenerator schemaGenerator = new SchemaGenerator();
-    GraphQLSchema graphQLSchema = schemaGenerator.makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
+    GraphQLSchema graphQLSchema = new SchemaGenerator().makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);
 
     return GraphQL.newGraphQL(graphQLSchema).build();
   }
