@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class LinkEndpointTests {
+public class VideoGameEndpointTests {
 
 	@Autowired
 	private WebApplicationContext webApplicationContext;
@@ -33,11 +33,11 @@ public class LinkEndpointTests {
 	@Test
 	public void allLinks() throws Exception {
 		mockMvc
-			.perform(post("/").content("{ \"query\": \"{allLinks {name, description}}\" }").contentType(MediaType.APPLICATION_JSON))
+			.perform(post("/").content("{ \"query\": \"{allVideoGames {name, description}}\" }").contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.allLinks[0].name").value("google.com"))
-			.andExpect(jsonPath("$.data.allLinks[0].description").value("A site to search"))
-			.andExpect(jsonPath("$.data.allLinks[1].name").value("linkedin.com"))
-			.andExpect(jsonPath("$.data.allLinks[1].description").value("A site to remember birthdays"));
+			.andExpect(jsonPath("$.data.allVideoGames[0].name").value("Metroid"))
+			.andExpect(jsonPath("$.data.allVideoGames[0].description").value("Platformer that made its appearance on the Nintendo."))
+			.andExpect(jsonPath("$.data.allVideoGames[1].name").value("Scrabble"))
+			.andExpect(jsonPath("$.data.allVideoGames[1].description").value("A board game they decided to make into a video game."));
 	}
 }

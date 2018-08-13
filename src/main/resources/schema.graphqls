@@ -1,6 +1,6 @@
-type Query{ allLinks: [Link] }
+type Query{ allVideoGames: [VideoGame] }
 
-type Link {
+type VideoGame {
     name: String
     description: String
 }

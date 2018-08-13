@@ -31,7 +31,7 @@ public class GraphqlApplication {
     TypeDefinitionRegistry typeDefinitionRegistry = schemaParser.parse(getSchema(resourceLoader));
 
     RuntimeWiring runtimeWiring = newRuntimeWiring()
-      .type("Query", builder -> builder.dataFetcher("allLinks", new QueryFetcher()))
+      .type("Query", builder -> builder.dataFetcher("allVideoGames", new QueryFetcher()))
       .build();
 
     GraphQLSchema graphQLSchema = new SchemaGenerator().makeExecutableSchema(typeDefinitionRegistry, runtimeWiring);

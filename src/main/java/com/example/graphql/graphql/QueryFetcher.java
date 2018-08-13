@@ -5,11 +5,11 @@ import graphql.schema.DataFetchingEnvironment;
 
 import java.util.List;
 
-public class QueryFetcher implements DataFetcher<List<Link>> {
-  private LinkRepository linkRepository = new LinkRepository();
+public class QueryFetcher implements DataFetcher<List<VideoGame>> {
+  private VideoGameRepository videoGameRepository = new VideoGameRepository();
 
   @Override
-  public List<Link> get(DataFetchingEnvironment dataFetchingEnvironment) {
-    return linkRepository.allLinks();
+  public List<VideoGame> get(DataFetchingEnvironment dataFetchingEnvironment) {
+    return videoGameRepository.allVideoGames();
   }
 }
